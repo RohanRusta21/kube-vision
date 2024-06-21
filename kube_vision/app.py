@@ -1,3 +1,4 @@
+# kube_vision/app.py
 
 import argparse
 from kubernetes import client, config
@@ -80,7 +81,9 @@ def main():
             v1.read_namespace(ns).metadata.labels.get(k) == v for k, v in namespace_labels.items())]
 
     # Collect and display the resource usage information
-    print(f"{'NODE':<18}{'NAMESPACE':<15}{'POD':<25}{'CPU REQUESTS':<15}{'CPU LIMITS':<15}{'MEMORY REQUESTS':<20}{'MEMORY LIMITS'}")
+    header_format = "{:<18}{:<15}{:<25}{:<15}{:<15}{:<20}{:<15}"
+    row_format = "{:<18}{:<15}{:<25}{:<15}{:<15}{:<20}{:<15}"
+    print(header_format.format("NODE", "NAMESPACE", "POD", "CPU REQUESTS", "CPU LIMITS", "MEMORY REQUESTS", "MEMORY LIMITS"))
 
     for node in nodes:
         node_name = node.metadata.name
@@ -123,16 +126,22 @@ def main():
                 total_memory_limits += pod_memory_limits
                 total_pod_count += 1
 
-                print(f"{node_name:<18}{namespace:<15}{pod_name:<25}{pod_cpu_requests}m ({pod_cpu_requests // 10}%)"
-                      f"{pod_cpu_limits}m ({pod_cpu_limits // 10}%)"
-                      f"{pod_memory_requests}Mi ({pod_memory_requests // 1024}%)"
-                      f"{pod_memory_limits}Mi ({pod_memory_limits // 1024}%)")
+                print(row_format.format(
+                    node_name, namespace, pod_name,
+                    f"{pod_cpu_requests}m ({pod_cpu_requests // 10}%)",
+                    f"{pod_cpu_limits}m ({pod_cpu_limits // 10}%)",
+                    f"{pod_memory_requests}Mi ({pod_memory_requests // 1024}%)",
+                    f"{pod_memory_limits}Mi ({pod_memory_limits // 1024}%)"
+                ))
 
         # Print totals for the node
-        print(f"{node_name:<18}{'*':<15}{'*':<25}{total_cpu_requests}m ({total_cpu_requests // 10}%)"
-              f"{total_cpu_limits}m ({total_cpu_limits // 10}%)"
-              f"{total_memory_requests}Mi ({total_memory_requests // 1024}%)"
-              f"{total_memory_limits}Mi ({total_memory_limits // 1024}%)")
+        print(row_format.format(
+            node_name, '*', '*',
+            f"{total_cpu_requests}m ({total_cpu_requests // 10}%)",
+            f"{total_cpu_limits}m ({total_cpu_limits // 10}%)",
+            f"{total_memory_requests}Mi ({total_memory_requests // 1024}%)",
+            f"{total_memory_limits}Mi ({total_memory_limits // 1024}%)"
+        ))
 
         if args.pod_count:
             print(f"Total pod count for node {node_name}: {total_pod_count}")
