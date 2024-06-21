@@ -1,4 +1,3 @@
-# kube_vision/app.py
 
 import argparse
 from kubernetes import client, config
@@ -95,7 +94,7 @@ def main():
 
         for ns in namespaces:
             # Retrieve pods in the namespace
-            pods = v1.list_pod_for_all_namespaces(field_selector=f"spec.nodeName={node_name}", namespace=ns).items
+            pods = v1.list_namespaced_pod(ns, field_selector=f"spec.nodeName={node_name}").items
 
             for pod in pods:
                 pod_name = pod.metadata.name
