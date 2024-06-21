@@ -5,7 +5,7 @@ def main():
     parser = argparse.ArgumentParser(description='Kubernetes Vision CLI')
 
     # Add the specified flags
-    parser.add_argument('--as', type=str, help='User to impersonate command with')
+    parser.add_argument('--as-user', type=str, help='User to impersonate command with')
     parser.add_argument('--as-group', type=str, help='Group to impersonate command with')
     parser.add_argument('-c', '--containers', action='store_true', help='Include containers in output')
     parser.add_argument('--context', type=str, help='Context to use for Kubernetes config')
@@ -37,10 +37,10 @@ def main():
         config.load_kube_config(context=args.context)
 
     # Handle impersonation
-    if args.as or args.as_group:
+    if args.as_user or args.as_group:
         configuration = client.Configuration()
-        if args.as:
-            configuration.impersonate = {'user': args.as}
+        if args.as_user:
+            configuration.impersonate = {'user': args.as_user}
         if args.as_group:
             configuration.impersonate['group'] = args.as_group
         client.Configuration.set_default(configuration)
