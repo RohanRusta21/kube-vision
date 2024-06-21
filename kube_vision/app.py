@@ -1,3 +1,5 @@
+# kube_vision/app.py
+
 import argparse
 from kubernetes import client, config
 
@@ -26,7 +28,6 @@ def main():
     ], help='Attribute to sort results by')
     parser.add_argument('-u', '--util', action='store_true', help='Include resource utilization in output')
     parser.add_argument('--pod-count', action='store_true', help='Include pod counts for each of the nodes and the whole cluster')
-    parser.add_argument('--help', action='help', help='Help for kube-capacity')
 
     args = parser.parse_args()
 
